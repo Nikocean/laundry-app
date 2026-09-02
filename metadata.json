@@ -1,0 +1,6 @@
+{
+  "name": "Laundry App & Web Admin",
+  "description": "Aplikasi laundry terintegrasi: Mobile Customer App, Mobile Courier App, dan Web Admin Dashboard dengan live tracking dan POS kasir offline.",
+  "requestFramePermissions": ["camera", "geolocation"],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
