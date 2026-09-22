@@ -8,11 +8,22 @@
   "scripts": {
     "dev:backend": "npm run dev -w laundry-backend",
     "dev:prototype": "npm run dev -w laundry-prototype",
+    "dev:admin": "npm run dev -w laundry-admin-dashboard",
     "build:backend": "npm run build -w laundry-backend",
     "build:prototype": "npm run build -w laundry-prototype",
-    "start:backend": "npm run start -w laundry-backend"
+    "build:admin": "npm run build -w laundry-admin-dashboard",
+    "start:backend": "npm run start -w laundry-backend",
+    "start:admin": "npm run start -w laundry-admin-dashboard"
   },
   "engines": {
     "node": ">=18"
+  },
+  "overrides": {
+    "react": "18.3.1",
+    "react-dom": "18.3.1",
+    "laundry-prototype": {
+      "react": "19.3.0",
+      "react-dom": "19.3.0"
+    }
   }
 }
