@@ -1,2 +1,2 @@
-// Config modules will be added in Phase 2+
-export {};
+export { env } from "./env";
+export { prisma } from "./prisma";

@@ -1,2 +1,2 @@
-// Controllers will be added in Phase 2+
+// Controllers are imported via route modules.
 export {};

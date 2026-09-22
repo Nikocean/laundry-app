@@ -37,13 +37,30 @@ model User {
   fcmToken     String?   @map("fcm_token")
   createdAt    DateTime  @default(now()) @map("created_at") @db.Timestamptz
 
-  addresses     Address[]
-  courier       Courier?
+  addresses      Address[]
+  courier        Courier?
   ordersAsCustomer Order[] @relation("OrderCustomer")
   ordersAsCourier  Order[] @relation("OrderCourier")
-  notifications Notification[]
+  notifications  Notification[]
+  refreshTokens  RefreshToken[]
 
   @@map("users")
+}
+
+// Auth support table for REQ-AUTH-05 (refresh revoke/rotate). Not in ERD section 3.
+model RefreshToken {
+  id        String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  userId    String    @map("user_id") @db.Uuid
+  tokenHash String    @map("token_hash")
+  expiresAt DateTime  @map("expires_at") @db.Timestamptz
+  revokedAt DateTime? @map("revoked_at") @db.Timestamptz
+  createdAt DateTime  @default(now()) @map("created_at") @db.Timestamptz
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId], map: "idx_refresh_tokens_user")
+  @@index([tokenHash], map: "idx_refresh_tokens_hash")
+  @@map("refresh_tokens")
 }
 
 model Address {

@@ -1,2 +1,2 @@
-// Middleware will be added in Phase 2+
-export {};
+export { requireAuth, requireRole } from "./auth";
+export { errorHandler } from "./errorHandler";
