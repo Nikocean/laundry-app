@@ -9,7 +9,8 @@
     "start": "node dist/server.js",
     "prisma:generate": "prisma generate",
     "prisma:migrate": "prisma migrate dev",
-    "prisma:studio": "prisma studio"
+    "prisma:studio": "prisma studio",
+    "report:daily": "ts-node-dev --transpile-only --exit-child src/jobs/runDailyReportOnce.ts"
   },
   "engines": {
     "node": ">=18"
@@ -21,6 +22,7 @@
     "dotenv": "^18.0.1",
     "express": "^4.22.3",
     "jsonwebtoken": "^9.0.3",
+    "node-cron": "^4.6.0",
     "socket.io": "^4.8.3"
   },
   "devDependencies": {
@@ -28,6 +30,7 @@
     "@types/express": "^4.17.25",
     "@types/jsonwebtoken": "^9.0.10",
     "@types/node": "^18.19.130",
+    "@types/node-cron": "^3.0.11",
     "prisma": "^5.22.0",
     "socket.io-client": "^4.8.3",
     "ts-node-dev": "^2.0.0",

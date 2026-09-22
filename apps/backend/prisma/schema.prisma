@@ -158,3 +158,14 @@ model Notification {
   @@index([userId, isRead], map: "idx_notifications_user_unread")
   @@map("notifications")
 }
+
+// REQ-REPORT-*: not in ERD section 3 — daily revenue snapshot table.
+model DailyReport {
+  id           String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  reportDate   DateTime @unique @map("report_date") @db.Date
+  totalRevenue Decimal  @map("total_revenue") @db.Decimal(12, 2)
+  orderCount   Int      @map("order_count")
+  createdAt    DateTime @default(now()) @map("created_at") @db.Timestamptz
+
+  @@map("daily_reports")
+}

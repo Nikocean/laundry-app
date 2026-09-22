@@ -5,6 +5,7 @@ import { env } from "./config/env";
 import { apiRouter } from "./routes";
 import { errorHandler } from "./middleware/errorHandler";
 import { initSocketServer } from "./realtime/socket";
+import { startDailyReportCron } from "./jobs/dailyReport.cron";
 
 const app = express();
 
@@ -24,4 +25,5 @@ initSocketServer(httpServer);
 httpServer.listen(env.port, () => {
   console.log(`laundry-backend listening on http://localhost:${env.port}`);
   console.log(`socket.io ready on same port`);
+  startDailyReportCron();
 });
