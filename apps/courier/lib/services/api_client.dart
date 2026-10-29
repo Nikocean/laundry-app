@@ -82,6 +82,38 @@ class ApiClient {
     }
   }
 
+  Future<void> updateFcmToken(String? fcmToken) async {
+    try {
+      await dio.patch<dynamic>(
+        '/api/users/me',
+        data: {'fcmToken': fcmToken},
+      );
+    } on DioException catch (error) {
+      throw ApiException.fromDio(error);
+    }
+  }
+
+  /// Uploads a gallery image as multipart `file` to the proof-photo endpoint.
+  /// The server stores it in Cloudinary and returns the order with its URL.
+  Future<LaundryOrder> uploadProofPhoto({
+    required String orderId,
+    required String filePath,
+    required String fileName,
+  }) async {
+    try {
+      final form = FormData.fromMap({
+        'file': await MultipartFile.fromFile(filePath, filename: fileName),
+      });
+      final response = await dio.post<dynamic>(
+        '/api/orders/$orderId/proof-photo',
+        data: form,
+      );
+      return LaundryOrder.fromJson(_asMap(response.data));
+    } on DioException catch (error) {
+      throw ApiException.fromDio(error);
+    }
+  }
+
   Future<AuthResult> _authPost(String path, Map<String, dynamic> body) async {
     try {
       final response = await dio.post<dynamic>(path, data: body);

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:laundry_courier/models/laundry_order.dart';
 import 'package:laundry_courier/models/status_step.dart';
 import 'package:laundry_courier/services/api_exception.dart';
@@ -23,8 +24,10 @@ class OrderDetailScreen extends StatefulWidget {
 class _OrderDetailScreenState extends State<OrderDetailScreen> {
   LaundryOrder? _order;
   String? _error;
+  String? _proofMessage;
   bool _loading = true;
   bool _saving = false;
+  bool _uploading = false;
 
   @override
   void initState() {
@@ -84,6 +87,43 @@ class _OrderDetailScreenState extends State<OrderDetailScreen> {
       setState(() {
         _error = 'Gagal memperbarui status.';
         _saving = false;
+      });
+    }
+  }
+
+  Future<void> _pickAndUploadProof() async {
+    final order = _order;
+    if (order == null) return;
+    final picked = await ImagePicker().pickImage(source: ImageSource.gallery);
+    if (picked == null || !mounted) return;
+    setState(() {
+      _uploading = true;
+      _error = null;
+      _proofMessage = null;
+    });
+    try {
+      final updated = await widget.session.uploadProofPhoto(
+        orderId: order.id,
+        filePath: picked.path,
+        fileName: picked.name,
+      );
+      if (!mounted) return;
+      setState(() {
+        _order = updated;
+        _uploading = false;
+        _proofMessage = 'Foto bukti berhasil diunggah.';
+      });
+    } on ApiException catch (error) {
+      if (!mounted) return;
+      setState(() {
+        _error = error.message;
+        _uploading = false;
+      });
+    } catch (_) {
+      if (!mounted) return;
+      setState(() {
+        _error = 'Gagal mengunggah foto bukti.';
+        _uploading = false;
       });
     }
   }
@@ -157,6 +197,63 @@ class _OrderDetailScreenState extends State<OrderDetailScreen> {
                   style: const TextStyle(
                     fontWeight: FontWeight.w800,
                     color: AppColors.primaryDark,
+                  ),
+                ),
+                const SizedBox(height: 20),
+                const Text(
+                  'Foto bukti',
+                  style: TextStyle(fontWeight: FontWeight.w800, fontSize: 14),
+                ),
+                const SizedBox(height: 8),
+                if (order.proofPhotoUrl != null &&
+                    order.proofPhotoUrl!.isNotEmpty) ...[
+                  ClipRRect(
+                    borderRadius: BorderRadius.circular(12),
+                    child: Image.network(
+                      order.proofPhotoUrl!,
+                      height: 180,
+                      width: double.infinity,
+                      fit: BoxFit.cover,
+                      errorBuilder: (_, _, _) => const SizedBox.shrink(),
+                    ),
+                  ),
+                  const SizedBox(height: 8),
+                  SelectableText(
+                    order.proofPhotoUrl!,
+                    key: const Key('proof-photo-url'),
+                    style: const TextStyle(
+                      color: AppColors.muted,
+                      fontSize: 11,
+                    ),
+                  ),
+                  const SizedBox(height: 8),
+                ],
+                if (_proofMessage != null) ...[
+                  Text(
+                    _proofMessage!,
+                    key: const Key('proof-upload-success'),
+                    style: const TextStyle(
+                      color: AppColors.primaryDark,
+                      fontSize: 13,
+                      fontWeight: FontWeight.w700,
+                    ),
+                  ),
+                  const SizedBox(height: 8),
+                ],
+                OutlinedButton.icon(
+                  key: const Key('pick-proof-photo'),
+                  onPressed: _uploading ? null : _pickAndUploadProof,
+                  icon: _uploading
+                      ? const SizedBox(
+                          width: 16,
+                          height: 16,
+                          child: CircularProgressIndicator(strokeWidth: 2),
+                        )
+                      : const Icon(Icons.photo_library_outlined),
+                  label: Text(
+                    _uploading
+                        ? 'Mengunggah...'
+                        : 'Pilih foto bukti dari galeri',
                   ),
                 ),
                 if (_error != null) ...[

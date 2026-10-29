@@ -119,6 +119,17 @@ class ApiClient {
     }
   }
 
+  Future<void> updateFcmToken(String? fcmToken) async {
+    try {
+      await dio.patch<dynamic>(
+        '/api/users/me',
+        data: {'fcmToken': fcmToken},
+      );
+    } on DioException catch (error) {
+      throw ApiException.fromDio(error);
+    }
+  }
+
   Future<AuthResult> _authPost(String path, Map<String, dynamic> body) async {
     try {
       final response = await dio.post<dynamic>(path, data: body);

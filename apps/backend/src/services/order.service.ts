@@ -315,17 +315,8 @@ export async function assignCourier(
   return serializeOrder(updated);
 }
 
-/** Sets proof photo URL (Cloudinary upload = later). */
-export async function setProofPhoto(
-  actor: AuthUser,
-  orderId: string,
-  proofPhotoUrl: string
-) {
-  const url = proofPhotoUrl?.trim();
-  if (!url) {
-    throw new AppError(400, "proofPhotoUrl is required");
-  }
-
+/** Only admin, or the courier assigned to this order, may set its proof photo. */
+export async function assertCanSetProofPhoto(actor: AuthUser, orderId: string) {
   const order = await prisma.order.findUnique({ where: { id: orderId } });
   if (!order) {
     throw new AppError(404, "Order not found");
@@ -338,6 +329,21 @@ export async function setProofPhoto(
   if (!allowed) {
     throw new AppError(403, "Forbidden");
   }
+  return order;
+}
+
+/** Sets proof photo URL. */
+export async function setProofPhoto(
+  actor: AuthUser,
+  orderId: string,
+  proofPhotoUrl: string
+) {
+  const url = proofPhotoUrl?.trim();
+  if (!url) {
+    throw new AppError(400, "proofPhotoUrl is required");
+  }
+
+  await assertCanSetProofPhoto(actor, orderId);
 
   const updated = await prisma.order.update({
     where: { id: orderId },

@@ -4,17 +4,20 @@ import 'package:laundry_courier/models/laundry_order.dart';
 import 'package:laundry_courier/services/api_client.dart';
 import 'package:laundry_courier/services/api_exception.dart';
 import 'package:laundry_courier/services/courier_realtime.dart';
+import 'package:laundry_courier/services/push_notifications.dart';
 import 'package:laundry_courier/services/token_store.dart';
 
 class Session extends ChangeNotifier {
   Session({TokenStore? store}) : _store = store ?? TokenStore() {
     _api = ApiClient(_store);
     realtime = CourierRealtime(_store);
+    push = PushNotifications(_api);
   }
 
   final TokenStore _store;
   late final ApiClient _api;
   late final CourierRealtime realtime;
+  late final PushNotifications push;
 
   AuthUser? user;
 
@@ -33,6 +36,7 @@ class Session extends ChangeNotifier {
       return;
     }
     await realtime.connect(user!.id);
+    await push.syncToken();
   }
 
   Future<void> login({required String email, required String password}) async {
@@ -44,10 +48,12 @@ class Session extends ChangeNotifier {
     }
     user = result.user;
     await realtime.connect(result.user.id);
+    await push.syncToken();
     notifyListeners();
   }
 
   Future<void> logout() async {
+    await push.clearToken();
     realtime.disconnect();
     await _store.clear();
     user = null;
@@ -75,5 +81,17 @@ class Session extends ChangeNotifier {
 
   Future<LaundryOrder> advanceStatus(LaundryOrder order) {
     return _api.advanceStatus(order);
+  }
+
+  Future<LaundryOrder> uploadProofPhoto({
+    required String orderId,
+    required String filePath,
+    required String fileName,
+  }) {
+    return _api.uploadProofPhoto(
+      orderId: orderId,
+      filePath: filePath,
+      fileName: fileName,
+    );
   }
 }

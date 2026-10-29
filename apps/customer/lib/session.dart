@@ -3,17 +3,20 @@ import 'package:laundry_customer/models/auth_user.dart';
 import 'package:laundry_customer/models/laundry_order.dart';
 import 'package:laundry_customer/services/api_client.dart';
 import 'package:laundry_customer/services/order_realtime.dart';
+import 'package:laundry_customer/services/push_notifications.dart';
 import 'package:laundry_customer/services/token_store.dart';
 
 class Session extends ChangeNotifier {
   Session({TokenStore? store}) : _store = store ?? TokenStore() {
     _api = ApiClient(_store);
     realtime = OrderRealtime(_store);
+    push = PushNotifications(_api);
   }
 
   final TokenStore _store;
   late final ApiClient _api;
   late final OrderRealtime realtime;
+  late final PushNotifications push;
 
   AuthUser? user;
 
@@ -31,6 +34,7 @@ class Session extends ChangeNotifier {
       return;
     }
     await realtime.connect();
+    await push.syncToken();
   }
 
   /// Register creates the account. The access token is stored only after login.
@@ -53,10 +57,12 @@ class Session extends ChangeNotifier {
     await _store.saveSession(result);
     user = result.user;
     await realtime.connect();
+    await push.syncToken();
     notifyListeners();
   }
 
   Future<void> logout() async {
+    await push.clearToken();
     realtime.disconnect();
     await _store.clear();
     user = null;
