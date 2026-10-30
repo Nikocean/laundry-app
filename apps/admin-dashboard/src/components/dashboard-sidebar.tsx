@@ -40,6 +40,9 @@ export function DashboardSidebar() {
             <Link
               key={item.href}
               href={item.href}
+              data-testid={
+                item.href === "/" ? "nav-overview" : `nav-${item.label.toLowerCase()}`
+              }
               className={cn(
                 "flex items-center gap-2 rounded-md px-3 py-2 text-sm transition-colors",
                 active
@@ -57,6 +60,7 @@ export function DashboardSidebar() {
         <Button
           variant="ghost"
           className="w-full justify-start gap-2"
+          data-testid="nav-sign-out"
           onClick={logout}
         >
           <LogOut className="size-4" />

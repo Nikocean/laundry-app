@@ -10,6 +10,7 @@
     "prisma:generate": "prisma generate",
     "prisma:migrate": "prisma migrate dev",
     "prisma:studio": "prisma studio",
+    "seed:e2e": "ts-node-dev --transpile-only --exit-child scripts/seed-e2e.ts",
     "report:daily": "ts-node-dev --transpile-only --exit-child src/jobs/runDailyReportOnce.ts"
   },
   "engines": {
