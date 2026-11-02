@@ -11,3 +11,9 @@ coverage/
 !.env.example
 .netlify/
 *.tsbuildinfo
+
+# Service-account / private key material (never commit)
+*-firebase-adminsdk*.json
+**/serviceAccount*.json
+**/*-credentials.json
+*.pem

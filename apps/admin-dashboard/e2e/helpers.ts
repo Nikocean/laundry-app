@@ -1,12 +1,22 @@
 import { expect, type APIRequestContext, type Page } from "@playwright/test";
 
+/** Local-only fixture defaults. In CI every E2E_* value must be provided via env. */
+function e2eEnv(name: string, localDefault: string): string {
+  const value = process.env[name]?.trim();
+  if (value) return value;
+  if (process.env.CI) {
+    throw new Error(`Missing required env ${name} for Playwright E2E in CI`);
+  }
+  return localDefault;
+}
+
 export const e2eCreds = {
-  adminEmail: process.env.E2E_ADMIN_EMAIL ?? "e2e.admin@laundry.test",
-  adminPassword: process.env.E2E_ADMIN_PASSWORD ?? "E2eAdminPass123!",
-  customerEmail: process.env.E2E_CUSTOMER_EMAIL ?? "e2e.customer@laundry.test",
-  customerPassword: process.env.E2E_CUSTOMER_PASSWORD ?? "E2eCustomerPass123!",
-  courierEmail: process.env.E2E_COURIER_EMAIL ?? "e2e.courier@laundry.test",
-  courierPassword: process.env.E2E_COURIER_PASSWORD ?? "E2eCourierPass123!",
+  adminEmail: e2eEnv("E2E_ADMIN_EMAIL", "e2e.admin@laundry.test"),
+  adminPassword: e2eEnv("E2E_ADMIN_PASSWORD", "E2eAdminPass123!"),
+  customerEmail: e2eEnv("E2E_CUSTOMER_EMAIL", "e2e.customer@laundry.test"),
+  customerPassword: e2eEnv("E2E_CUSTOMER_PASSWORD", "E2eCustomerPass123!"),
+  courierEmail: e2eEnv("E2E_COURIER_EMAIL", "e2e.courier@laundry.test"),
+  courierPassword: e2eEnv("E2E_COURIER_PASSWORD", "E2eCourierPass123!"),
 };
 
 export const backendURL = (

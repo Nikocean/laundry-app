@@ -12,20 +12,30 @@ import { OrderStatus, Prisma, UserRole } from "@prisma/client";
 import { prisma } from "../src/config/prisma";
 import { env } from "../src/config/env";
 
+/** Local-only fixture defaults. In CI every E2E_* value must be provided via env. */
+function e2eEnv(name: string, localDefault: string): string {
+  const value = process.env[name]?.trim();
+  if (value) return value;
+  if (process.env.CI) {
+    throw new Error(`Missing required env ${name} for seed:e2e in CI`);
+  }
+  return localDefault;
+}
+
 const fixtures = {
   admin: {
-    email: (process.env.E2E_ADMIN_EMAIL ?? "e2e.admin@laundry.test").toLowerCase(),
-    password: process.env.E2E_ADMIN_PASSWORD ?? "E2eAdminPass123!",
+    email: e2eEnv("E2E_ADMIN_EMAIL", "e2e.admin@laundry.test").toLowerCase(),
+    password: e2eEnv("E2E_ADMIN_PASSWORD", "E2eAdminPass123!"),
     name: "E2E Admin",
   },
   customer: {
-    email: (process.env.E2E_CUSTOMER_EMAIL ?? "e2e.customer@laundry.test").toLowerCase(),
-    password: process.env.E2E_CUSTOMER_PASSWORD ?? "E2eCustomerPass123!",
+    email: e2eEnv("E2E_CUSTOMER_EMAIL", "e2e.customer@laundry.test").toLowerCase(),
+    password: e2eEnv("E2E_CUSTOMER_PASSWORD", "E2eCustomerPass123!"),
     name: "E2E Customer",
   },
   courier: {
-    email: (process.env.E2E_COURIER_EMAIL ?? "e2e.courier@laundry.test").toLowerCase(),
-    password: process.env.E2E_COURIER_PASSWORD ?? "E2eCourierPass123!",
+    email: e2eEnv("E2E_COURIER_EMAIL", "e2e.courier@laundry.test").toLowerCase(),
+    password: e2eEnv("E2E_COURIER_PASSWORD", "E2eCourierPass123!"),
     name: "E2E Courier",
   },
 };
