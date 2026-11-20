@@ -13,7 +13,9 @@
     "build:prototype": "npm run build -w laundry-prototype",
     "build:admin": "npm run build -w laundry-admin-dashboard",
     "start:backend": "npm run start -w laundry-backend",
-    "start:admin": "npm run start -w laundry-admin-dashboard"
+    "start:admin": "npm run start -w laundry-admin-dashboard",
+    "seed:e2e": "npm run seed:e2e -w laundry-backend",
+    "test:e2e:admin": "npm run test:e2e -w laundry-admin-dashboard"
   },
   "engines": {
     "node": ">=18"

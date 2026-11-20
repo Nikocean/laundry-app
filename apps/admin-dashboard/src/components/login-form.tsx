@@ -61,11 +61,12 @@ export function LoginForm() {
         </CardDescription>
       </CardHeader>
       <CardContent>
-        <form onSubmit={onSubmit} className="space-y-4">
+        <form onSubmit={onSubmit} className="space-y-4" data-testid="login-form">
           <div className="space-y-2">
             <Label htmlFor="email">Email</Label>
             <Input
               id="email"
+              data-testid="login-email"
               type="email"
               autoComplete="email"
               required
@@ -78,6 +79,7 @@ export function LoginForm() {
             <Label htmlFor="password">Password</Label>
             <Input
               id="password"
+              data-testid="login-password"
               type="password"
               autoComplete="current-password"
               required
@@ -86,11 +88,16 @@ export function LoginForm() {
             />
           </div>
           {error ? (
-            <p className="text-sm text-destructive" role="alert">
+            <p className="text-sm text-destructive" role="alert" data-testid="login-error">
               {error}
             </p>
           ) : null}
-          <Button type="submit" className="w-full" disabled={pending}>
+          <Button
+            type="submit"
+            className="w-full"
+            disabled={pending}
+            data-testid="login-submit"
+          >
             {pending ? "Signing in…" : "Sign in"}
           </Button>
         </form>

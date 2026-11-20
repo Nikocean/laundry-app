@@ -124,6 +124,7 @@ export function OrdersTable({ initialOrders }: OrdersTableProps) {
               type="button"
               size="sm"
               variant="outline"
+              data-testid={`order-assign-${row.original.id}`}
               onClick={() => setAssignOrder(row.original)}
             >
               Assign
@@ -181,6 +182,7 @@ export function OrdersTable({ initialOrders }: OrdersTableProps) {
           <Label htmlFor="status-filter">Status</Label>
           <select
             id="status-filter"
+            data-testid="orders-status-filter"
             className="flex h-10 w-48 rounded-md border border-input bg-background px-3 text-sm"
             value={statusFilter}
             onChange={(e) => onStatusChange(e.target.value)}
@@ -197,6 +199,7 @@ export function OrdersTable({ initialOrders }: OrdersTableProps) {
           <Label htmlFor="customer-filter">Customer name</Label>
           <Input
             id="customer-filter"
+            data-testid="orders-customer-filter"
             className="w-64"
             placeholder="Filter by customer ID…"
             value={customerFilter}
@@ -206,7 +209,10 @@ export function OrdersTable({ initialOrders }: OrdersTableProps) {
             Backend list payload has <code>customerId</code> only (no name yet).
           </p>
         </div>
-        <div className="ml-auto text-sm text-muted-foreground">
+        <div
+          className="ml-auto text-sm text-muted-foreground"
+          data-testid="orders-socket-state"
+        >
           Live:{" "}
           <span
             className={
@@ -244,7 +250,11 @@ export function OrdersTable({ initialOrders }: OrdersTableProps) {
           <TableBody>
             {table.getRowModel().rows.length ? (
               table.getRowModel().rows.map((row) => (
-                <TableRow key={row.id}>
+                <TableRow
+                  key={row.id}
+                  data-testid={`order-row-${row.original.id}`}
+                  data-status={row.original.status}
+                >
                   {row.getVisibleCells().map((cell) => (
                     <TableCell key={cell.id}>
                       {flexRender(

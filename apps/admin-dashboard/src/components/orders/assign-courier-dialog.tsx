@@ -121,6 +121,7 @@ export function AssignCourierDialog({
       role="dialog"
       aria-modal="true"
       aria-labelledby="assign-courier-title"
+      data-testid="assign-dialog"
     >
       <Card className="w-full max-w-md">
         <CardHeader>
@@ -136,6 +137,7 @@ export function AssignCourierDialog({
               <Label htmlFor="courier-select">Courier</Label>
               <select
                 id="courier-select"
+                data-testid="assign-courier-select"
                 className="flex h-10 w-full rounded-md border border-input bg-background px-3 text-sm"
                 value={courierUserId}
                 disabled={loadingList || submitting}
@@ -174,6 +176,7 @@ export function AssignCourierDialog({
               </Button>
               <Button
                 type="submit"
+                data-testid="assign-submit"
                 disabled={submitting || loadingList || !courierUserId}
               >
                 {submitting ? "Assigning…" : "Assign"}
